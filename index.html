@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Угадай число</title>
+<style>
+    body { text-align: center; font-family: Arial, sans-serif; margin-top: 50px; }
+    #line { width: 100px; height: 10px; background: blue; position: relative; margin: auto; }
+    input, button { font-size: 16px; margin: 5px; }
+</style>
+</head>
+<body>
+
+<h1>Угадай число от 1 до 100</h1>
+
+<input type="number" id="guessInput" placeholder="Введите число">
+<button onclick="checkGuess()">Проверить</button>
+<p id="message"></p>
+
+<div id="line"></div>
+
+<script>
+let number = Math.floor(Math.random() * 100) + 1;
+let line = document.getElementById('line');
+let pos = 0;
+let dx = 3;
+let maxWidth = window.innerWidth - 120;
+
+function moveLine() {
+    pos += dx;
+    if (pos > maxWidth || pos < 0) dx = -dx;
+    line.style.left = pos + "px";
+    requestAnimationFrame(moveLine);
+}
+moveLine();
+
+function checkGuess() {
+    let guess = parseInt(document.getElementById('guessInput').value);
+    let message = document.getElementById('message');
+
+    if(isNaN(guess)) {
+        message.textContent = "Введите число!";
+        return;
+    }
+
+    if(guess === number) {
+        message.textContent = "Молодец! Угадал!";
+        number = Math.floor(Math.random() * 100) + 1;
+        line.style.background = "green";
+        dx = 3;
+    } else {
+        message.textContent = "Не угадал, попробуй ещё!";
+        line.style.background = "red";
+        dx += 1;
+    }
+
+    document.getElementById('guessInput').value = "";
+}
+</script>
+
+</body>
+</html>
