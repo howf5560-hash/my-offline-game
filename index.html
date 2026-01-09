@@ -1,40 +1,41 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<title>Угадай число</title>
-<style>
-    body { text-align: center; font-family: Arial, sans-serif; margin-top: 50px; background-color: #222; color: #fff; }
-    #line { width: 100px; height: 10px; background: blue; position: absolute; margin: 50px; }
-    input, button { font-size: 16px; margin: 5px; padding: 5px; }
-    #message { font-size: 18px; margin-top: 20px; }
-    #result { font-size: 18px; margin-top: 30px; color: #FFD700; }
-    #modal { display: none; background: rgba(0,0,0,0.7); color: white; padding: 20px; position: absolute; top: 30%; left: 50%; transform: translateX(-50%); border-radius: 10px; text-align: center; }
-    #coins { position: fixed; top: 20px; right: 20px; font-size: 24px; color: gold; }
-    #record { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); font-size: 18px; color: #FFD700; }
-    #shop-button { position: fixed; bottom: 20px; left: 20px; font-size: 24px; background-color: #f1c40f; border: none; padding: 10px; border-radius: 50%; cursor: pointer; }
-    #shop { display: none; position: fixed; top: 0; left: 0; width: 50%; height: 100%; background: rgba(0, 0, 0, 0.8); color: white; padding: 20px; z-index: 100; text-align: center; }
-    .shop-item { margin: 20px 0; cursor: pointer; padding: 10px; background: #333; border-radius: 5px; }
-    .shop-item:hover { background: #555; }
-    .shop-item.disabled { background: #777; cursor: not-allowed; }
-    input { background-color: transparent; color: #fff; border: none; border-bottom: 1px solid #fff; outline: none; font-size: 16px; }
-    #version { position: fixed; bottom: 20px; right: 20px; font-size: 16px; color: #fff; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Угадай число</title>
+    <style>
+        body { text-align: center; font-family: Arial, sans-serif; margin-top: 50px; background-color: #222; color: #fff; }
+        #line { width: 100px; height: 10px; background: blue; position: absolute; margin: 50px; }
+        input, button { font-size: 16px; margin: 5px; padding: 5px; }
+        #message { font-size: 18px; margin-top: 20px; }
+        #result { font-size: 18px; margin-top: 30px; color: #FFD700; }
+        #modal { display: none; background: rgba(0,0,0,0.7); color: white; padding: 20px; position: absolute; top: 30%; left: 50%; transform: translateX(-50%); border-radius: 10px; text-align: center; }
+        #coins { position: fixed; top: 20px; right: 20px; font-size: 24px; color: gold; }
+        #record { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); font-size: 18px; color: #FFD700; }
+        #shop-button { position: fixed; bottom: 20px; left: 20px; font-size: 24px; background-color: #f1c40f; border: none; padding: 10px; border-radius: 50%; cursor: pointer; }
+        #shop { display: none; position: fixed; top: 0; left: 0; width: 50%; height: 100%; background: rgba(0, 0, 0, 0.8); color: white; padding: 20px; z-index: 100; text-align: center; }
+        .shop-item { margin: 20px 0; cursor: pointer; padding: 10px; background: #333; border-radius: 5px; }
+        .shop-item:hover { background: #555; }
+        .shop-item.disabled { background: #777; cursor: not-allowed; }
+        input { background-color: transparent; color: #fff; border: none; border-bottom: 1px solid #fff; outline: none; font-size: 16px; }
+        #version { position: fixed; bottom: 20px; right: 20px; font-size: 16px; color: #fff; }
 
-    /* Для радужного шрифта */
-    .rainbow-text {
-        background-image: linear-gradient(45deg, #FF0000, #FF7F00, #FFFF00, #00FF00, #0000FF, #4B0082, #8B00FF);
-        background-size: 400% 400%;
-        color: transparent;
-        -webkit-background-clip: text;
-        animation: rainbow-animation 5s ease infinite;
-    }
+        /* Для радужного шрифта */
+        .rainbow-text {
+            background-image: linear-gradient(45deg, #FF0000, #FF7F00, #FFFF00, #00FF00, #0000FF, #4B0082, #8B00FF);
+            background-size: 400% 400%;
+            color: transparent;
+            -webkit-background-clip: text;
+            animation: rainbow-animation 5s ease infinite;
+        }
 
-    @keyframes rainbow-animation {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
-</style>
+        @keyframes rainbow-animation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+    </style>
 </head>
 <body>
 
@@ -156,7 +157,7 @@ function checkGuess() {
         line.style.background = "red"; // линия становится красной
         setTimeout(() => {
             line.style.background = "blue"; // через несколько секунд она снова станет синей
-        }, 500); // возвращается через 0.5 секунды
+        }, 500); // через 0.5 секунды возвращается в синий цвет
         dx += 0.2; // линия ускоряется
     }
 
