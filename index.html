@@ -5,7 +5,7 @@
 <title>Угадай число</title>
 <style>
     body { text-align: center; font-family: Arial, sans-serif; margin-top: 50px; background-color: #222; color: #fff; }
-    #line { width: 100px; height: 10px; background: blue; position: relative; margin: 50px auto; }
+    #line { width: 100px; height: 10px; background: blue; position: absolute; margin: 50px; }
     input, button { font-size: 16px; margin: 5px; padding: 5px; }
     #message { font-size: 18px; margin-top: 20px; }
     #result { font-size: 18px; margin-top: 30px; color: #FFD700; }
@@ -16,7 +16,7 @@
 
 <h1>Угадай число от 1 до 100</h1>
 
-<input type="text" id="guessInput" placeholder="Введите число или Валера для чит-кода">
+<input type="text" id="guessInput" placeholder="Введите число">
 <button onclick="checkGuess()">Проверить</button>
 <p id="message"></p>
 
@@ -35,14 +35,18 @@ let line = document.getElementById('line');
 let pos = 0;
 let dx = 3; // начальная скорость
 let maxWidth = window.innerWidth - 120;
+let maxHeight = window.innerHeight - 20; // для движения змейки по вертикали
 let errorCount = 0; // счётчик ошибок
 let startTime = Date.now(); // время начала игры
 let gameFinished = false; // флаг для завершения игры
 
+// Двигаем змейку по всему экрану
 function moveLine() {
     pos += dx;
     if (pos > maxWidth || pos < 0) dx = -dx;
+    let randomVertical = Math.random() * maxHeight; // случайное вертикальное положение
     line.style.left = pos + "px";
+    line.style.top = randomVertical + "px"; // обновляем вертикальную позицию
     requestAnimationFrame(moveLine);
 }
 moveLine();
@@ -88,7 +92,10 @@ function checkGuess() {
         showModal(timeTaken, errorCount);
     } else {
         message.textContent = "Не угадал! Попробуй ещё!";
-        line.style.background = "red";
+        line.style.background = "red"; // линия становится красной
+        setTimeout(() => {
+            line.style.background = "blue"; // через несколько секунд она снова станет синей
+        }, 500); // возвращается через 0.5 секунды
         dx += 1; // линия ускоряется
     }
 
