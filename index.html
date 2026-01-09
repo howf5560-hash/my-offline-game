@@ -217,7 +217,7 @@ function buyFont(color) {
         alert("Этот шрифт уже куплен!");
         // Если шрифт куплен, его можно надеть
         currentFont = color;
-        document.getElementById('guessInput').classList.add(color + '-text');
+        document.getElementById('guessInput').className = color + '-text';
         return;
     }
 
@@ -227,7 +227,7 @@ function buyFont(color) {
         boughtFonts[color] = true; // шрифт куплен
         currentFont = color;
         // Изменяем цвет шрифта в поле ввода
-        document.getElementById('guessInput').classList.add(color + '-text');
+        document.getElementById('guessInput').className = color + '-text';
     } else {
         alert("У вас недостаточно монет!");
     }
@@ -242,3 +242,4 @@ function updateVersion() {
 
 </body>
 </html>
+
