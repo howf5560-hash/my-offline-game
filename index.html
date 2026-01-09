@@ -19,6 +19,21 @@
     .shop-item.disabled { background: #777; cursor: not-allowed; }
     input { background-color: transparent; color: #fff; border: none; border-bottom: 1px solid #fff; outline: none; font-size: 16px; }
     #version { position: fixed; bottom: 20px; right: 20px; font-size: 16px; color: #fff; }
+
+    /* Для радужного шрифта */
+    .rainbow-text {
+        background-image: linear-gradient(45deg, #FF0000, #FF7F00, #FFFF00, #00FF00, #0000FF, #4B0082, #8B00FF);
+        background-size: 400% 400%;
+        color: transparent;
+        -webkit-background-clip: text;
+        animation: rainbow-animation 5s ease infinite;
+    }
+
+    @keyframes rainbow-animation {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
 </style>
 </head>
 <body>
@@ -73,13 +88,15 @@ let currentFont = "black"; // текущий шрифт (по умолчанию
 let boughtFonts = { blue: false, orange: false, rainbow: false }; // отслеживаем купленные шрифты
 let version = 1.001; // начальная версия игры
 
-// Двигаем змейку только слева направо
+// Двигаем змейку только слева направо с постоянной скоростью
 function moveLine() {
     pos += dx;
-    if (pos > maxWidth || pos < 0) dx = -dx;
+    if (pos > maxWidth || pos < 0) {
+        // Линия меняет направление, но не замедляется
+        dx = -dx;
+    }
     line.style.left = pos + "px";
-    // Линия теперь не двигается по вертикали
-    requestAnimationFrame(moveLine);
+    requestAnimationFrame(moveLine); // продолжает двигаться с постоянной скоростью
 }
 moveLine();
 
@@ -197,6 +214,9 @@ function buyFont(color) {
     // Проверка на купленный шрифт
     if (boughtFonts[color]) {
         alert("Этот шрифт уже куплен!");
+        // Если шрифт куплен, его можно надеть
+        currentFont = color;
+        document.getElementById('guessInput').classList.add(color + '-text');
         return;
     }
 
@@ -206,17 +226,10 @@ function buyFont(color) {
         boughtFonts[color] = true; // шрифт куплен
         currentFont = color;
         // Изменяем цвет шрифта в поле ввода
-        document.getElementById('guessInput').style.color = color === 'rainbow' ? getRainbowColor() : color;
+        document.getElementById('guessInput').classList.add(color + '-text');
     } else {
         alert("У вас недостаточно монет!");
     }
-}
-
-// Применение радужного цвета
-function getRainbowColor() {
-    const colors = ['#FF0000', '#FF7F00', '#FFFF00', '#00FF00', '#0000FF', '#4B0082', '#8B00FF'];
-    let i = Math.floor(Math.random() * colors.length);
-    return colors[i];
 }
 
 // Обновление версии игры
@@ -224,7 +237,6 @@ function updateVersion() {
     version += 0.001; // увеличиваем на 0.001
     document.getElementById('version').textContent = `Version: ${version.toFixed(3)}`;
 }
-
 </script>
 
 </body>
