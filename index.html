@@ -12,6 +12,11 @@
     #modal { display: none; background: rgba(0,0,0,0.7); color: white; padding: 20px; position: absolute; top: 30%; left: 50%; transform: translateX(-50%); border-radius: 10px; text-align: center; }
     #coins { position: fixed; top: 20px; right: 20px; font-size: 24px; color: gold; }
     #record { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); font-size: 18px; color: #FFD700; }
+    #shop-button { position: fixed; bottom: 20px; left: 20px; font-size: 24px; background-color: #f1c40f; border: none; padding: 10px; border-radius: 50%; cursor: pointer; }
+    #shop { display: none; position: fixed; top: 0; left: 0; width: 50%; height: 100%; background: rgba(0, 0, 0, 0.8); color: white; padding: 20px; z-index: 100; text-align: center; }
+    .shop-item { margin: 20px 0; cursor: pointer; padding: 10px; background: #333; border-radius: 5px; }
+    .shop-item:hover { background: #555; }
+    .shop-item.disabled { background: #777; cursor: not-allowed; }
 </style>
 </head>
 <body>
@@ -34,11 +39,24 @@
 <div id="coins">Монеты: 0</div>
 <div id="record">Рекорд: Время - 0s, Ошибки - 0</div>
 
+<!-- Кнопка для открытия магазина -->
+<button id="shop-button" onclick="openShop()">🛒</button>
+
+<!-- Магазин -->
+<div id="shop">
+    <h2>Магазин</h2>
+    <div class="shop-item" onclick="buyFont('blue')" id="blue-font">Синий шрифт (10 монет)</div>
+    <div class="shop-item" onclick="buyFont('orange')" id="orange-font">Оранжевый шрифт (50 монет)</div>
+    <div class="shop-item" onclick="buyFont('rainbow')" id="rainbow-font">Радужный шрифт (100 монет)</div>
+    <div class="shop-item disabled">Заблокировано</div>
+    <button onclick="closeShop()">Закрыть магазин</button>
+</div>
+
 <script>
 let number = Math.floor(Math.random() * 100) + 1; // случайное число
 let line = document.getElementById('line');
 let pos = 0;
-let dx = 1; // начальная скорость (очень медленная)
+let dx = 0.5; // начальная скорость (очень медленно)
 let maxWidth = window.innerWidth - 120;
 let maxHeight = window.innerHeight - 20; // для движения змейки по вертикали
 let errorCount = 0; // счётчик ошибок
@@ -46,6 +64,7 @@ let startTime = Date.now(); // время начала игры
 let gameFinished = false; // флаг для завершения игры
 let coins = 0; // количество монет
 let oldRecord = { time: 0, errors: 0 }; // рекорд
+let currentFont = "white"; // текущий шрифт
 
 // Двигаем змейку по всему экрану
 function moveLine() {
@@ -88,7 +107,7 @@ function checkGuess() {
     if (guess === number) {
         message.textContent = "Молодец! Угадал!";
         line.style.background = "green";
-        dx = 3; // сброс скорости
+        dx = 0.5; // сброс скорости
         gameFinished = true;
 
         // Вычисление времени
@@ -105,7 +124,7 @@ function checkGuess() {
         setTimeout(() => {
             line.style.background = "blue"; // через несколько секунд она снова станет синей
         }, 500); // возвращается через 0.5 секунды
-        dx += 1; // линия ускоряется
+        dx += 0.2; // линия ускоряется
     }
 
     document.getElementById('guessInput').value = "";
@@ -141,8 +160,42 @@ function resetGame() {
     startTime = Date.now(); // сброс времени
     gameFinished = false; // сброс флага игры
     line.style.background = 'blue'; // сброс цвета линии
-    dx = 1; // сброс скорости (медленно)
+    dx = 0.5; // сброс скорости (медленно)
     document.getElementById('message').textContent = ""; // очистка сообщения
+}
+
+// Магазин
+function openShop() {
+    document.getElementById('shop').style.display = 'block';
+    document.getElementById('shop-button').style.display = 'none';
+}
+
+function closeShop() {
+    document.getElementById('shop').style.display = 'none';
+    document.getElementById('shop-button').style.display = 'block';
+}
+
+function buyFont(color) {
+    let fontPrice = { 'blue': 10, 'orange': 50, 'rainbow': 100 };
+
+    if (coins >= fontPrice[color]) {
+        coins -= fontPrice[color]; // списываем монеты
+        document.getElementById('coins').textContent = `Монеты: ${coins}`;
+        currentFont = color;
+    } else {
+        alert("У вас недостаточно монет!");
+    }
+}
+
+// Применение шрифта
+document.getElementById('guessInput').addEventListener('input', function() {
+    document.getElementById('guessInput').style.color = currentFont === 'rainbow' ? getRainbowColor() : currentFont;
+});
+
+function getRainbowColor() {
+    const colors = ['#FF0000', '#FF7F00', '#FFFF00', '#00FF00', '#0000FF', '#4B0082', '#8B00FF'];
+    let i = Math.floor(Math.random() * colors.length);
+    return colors[i];
 }
 </script>
 
