@@ -10,6 +10,8 @@
     #message { font-size: 18px; margin-top: 20px; }
     #result { font-size: 18px; margin-top: 30px; color: #FFD700; }
     #modal { display: none; background: rgba(0,0,0,0.7); color: white; padding: 20px; position: absolute; top: 30%; left: 50%; transform: translateX(-50%); border-radius: 10px; text-align: center; }
+    #coins { position: fixed; top: 20px; right: 20px; font-size: 24px; color: gold; }
+    #record { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); font-size: 18px; color: #FFD700; }
 </style>
 </head>
 <body>
@@ -29,16 +31,21 @@
     <button onclick="closeModal()">Закрыть</button>
 </div>
 
+<div id="coins">Монеты: 0</div>
+<div id="record">Рекорд: Время - 0s, Ошибки - 0</div>
+
 <script>
 let number = Math.floor(Math.random() * 100) + 1; // случайное число
 let line = document.getElementById('line');
 let pos = 0;
-let dx = 3; // начальная скорость
+let dx = 1; // начальная скорость (очень медленная)
 let maxWidth = window.innerWidth - 120;
 let maxHeight = window.innerHeight - 20; // для движения змейки по вертикали
 let errorCount = 0; // счётчик ошибок
 let startTime = Date.now(); // время начала игры
 let gameFinished = false; // флаг для завершения игры
+let coins = 0; // количество монет
+let oldRecord = { time: 0, errors: 0 }; // рекорд
 
 // Двигаем змейку по всему экрану
 function moveLine() {
@@ -90,6 +97,8 @@ function checkGuess() {
 
         // Показываем результат
         showModal(timeTaken, errorCount);
+        coins += 10; // начисляем монеты
+        document.getElementById('coins').textContent = `Монеты: ${coins}`;
     } else {
         message.textContent = "Не угадал! Попробуй ещё!";
         line.style.background = "red"; // линия становится красной
@@ -107,6 +116,15 @@ function showModal(time, errors) {
     let resultText = `Вы угадали число за ${time.toFixed(2)} секунд с ${errors} ошибками.`;
     document.getElementById('result').textContent = resultText;
     document.getElementById('modal').style.display = 'block';
+
+    // Обновляем рекорд
+    if (time < oldRecord.time || oldRecord.time === 0) {
+        oldRecord.time = time;
+        oldRecord.errors = errors;
+    }
+
+    // Показываем старый рекорд
+    document.getElementById('record').textContent = `Рекорд: Время - ${oldRecord.time.toFixed(2)}s, Ошибки - ${oldRecord.errors}`;
 }
 
 // Функция для закрытия модального окна
@@ -123,7 +141,7 @@ function resetGame() {
     startTime = Date.now(); // сброс времени
     gameFinished = false; // сброс флага игры
     line.style.background = 'blue'; // сброс цвета линии
-    dx = 3; // сброс скорости
+    dx = 1; // сброс скорости (медленно)
     document.getElementById('message').textContent = ""; // очистка сообщения
 }
 </script>
