@@ -24,7 +24,7 @@
 
 <h1>Угадай число от 1 до 100</h1>
 
-<input type="text" id="guessInput" placeholder="Введите число">
+<input type="text" id="guessInput" placeholder="Введите число" onkeydown="checkEnter(event)">
 <button onclick="checkGuess()">Проверить</button>
 <p id="message"></p>
 
@@ -77,6 +77,12 @@ function moveLine() {
 }
 moveLine();
 
+function checkEnter(event) {
+    if (event.key === "Enter") {
+        checkGuess();
+    }
+}
+
 function checkGuess() {
     if (gameFinished) return; // если игра закончена, не обрабатываем новые попытки
 
@@ -88,6 +94,8 @@ function checkGuess() {
         message.textContent = "Ты активировал чит-код! Победа!";
         line.style.background = "green";
         gameFinished = true;
+        coins += 10; // за чит-код тоже даём монеты
+        document.getElementById('coins').textContent = `Монеты: ${coins}`;
         let endTime = Date.now();
         let timeTaken = (endTime - startTime) / 1000; // время в секундах
         showModal(timeTaken, errorCount);
