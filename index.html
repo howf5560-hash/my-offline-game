@@ -4,27 +4,40 @@
 <meta charset="UTF-8">
 <title>Угадай число</title>
 <style>
-    body { text-align: center; font-family: Arial, sans-serif; margin-top: 50px; }
-    #line { width: 100px; height: 10px; background: blue; position: relative; margin: auto; }
-    input, button { font-size: 16px; margin: 5px; }
+    body { text-align: center; font-family: Arial, sans-serif; margin-top: 50px; background-color: #222; color: #fff; }
+    #line { width: 100px; height: 10px; background: blue; position: relative; margin: 50px auto; }
+    input, button { font-size: 16px; margin: 5px; padding: 5px; }
+    #message { font-size: 18px; margin-top: 20px; }
+    #result { font-size: 18px; margin-top: 30px; color: #FFD700; }
+    #modal { display: none; background: rgba(0,0,0,0.7); color: white; padding: 20px; position: absolute; top: 30%; left: 50%; transform: translateX(-50%); border-radius: 10px; text-align: center; }
 </style>
 </head>
 <body>
 
 <h1>Угадай число от 1 до 100</h1>
 
-<input type="number" id="guessInput" placeholder="Введите число">
+<input type="text" id="guessInput" placeholder="Введите число или Валера для чит-кода">
 <button onclick="checkGuess()">Проверить</button>
 <p id="message"></p>
 
 <div id="line"></div>
 
+<!-- Модальное окно с результатами -->
+<div id="modal">
+    <h2>Результаты</h2>
+    <p id="result"></p>
+    <button onclick="closeModal()">Закрыть</button>
+</div>
+
 <script>
-let number = Math.floor(Math.random() * 100) + 1;
+let number = Math.floor(Math.random() * 100) + 1; // случайное число
 let line = document.getElementById('line');
 let pos = 0;
-let dx = 3;
+let dx = 3; // начальная скорость
 let maxWidth = window.innerWidth - 120;
+let errorCount = 0; // счётчик ошибок
+let startTime = Date.now(); // время начала игры
+let gameFinished = false; // флаг для завершения игры
 
 function moveLine() {
     pos += dx;
@@ -35,26 +48,76 @@ function moveLine() {
 moveLine();
 
 function checkGuess() {
-    let guess = parseInt(document.getElementById('guessInput').value);
+    if (gameFinished) return; // если игра закончена, не обрабатываем новые попытки
+
+    let guess = document.getElementById('guessInput').value.trim().toLowerCase(); // получаем введённый текст
     let message = document.getElementById('message');
 
-    if(isNaN(guess)) {
+    // Чит-код
+    if (guess === "валера") {
+        message.textContent = "Ты активировал чит-код! Победа!";
+        line.style.background = "green";
+        gameFinished = true;
+        let endTime = Date.now();
+        let timeTaken = (endTime - startTime) / 1000; // время в секундах
+        showModal(timeTaken, errorCount);
+        return;
+    }
+
+    // Если введено не число
+    if (isNaN(guess)) {
         message.textContent = "Введите число!";
         return;
     }
 
-    if(guess === number) {
+    guess = parseInt(guess); // преобразуем в число
+
+    errorCount++; // увеличиваем количество ошибок
+
+    if (guess === number) {
         message.textContent = "Молодец! Угадал!";
-        number = Math.floor(Math.random() * 100) + 1;
         line.style.background = "green";
-        dx = 3;
+        dx = 3; // сброс скорости
+        gameFinished = true;
+
+        // Вычисление времени
+        let endTime = Date.now();
+        let timeTaken = (endTime - startTime) / 1000; // время в секундах
+
+        // Показываем результат
+        showModal(timeTaken, errorCount);
     } else {
-        message.textContent = "Не угадал, попробуй ещё!";
+        message.textContent = "Не угадал! Попробуй ещё!";
         line.style.background = "red";
-        dx += 1;
+        dx += 1; // линия ускоряется
     }
 
     document.getElementById('guessInput').value = "";
+}
+
+// Функция для отображения модального окна
+function showModal(time, errors) {
+    let resultText = `Вы угадали число за ${time.toFixed(2)} секунд с ${errors} ошибками.`;
+    document.getElementById('result').textContent = resultText;
+    document.getElementById('modal').style.display = 'block';
+}
+
+// Функция для закрытия модального окна
+function closeModal() {
+    document.getElementById('modal').style.display = 'none';
+    // Перезапускаем игру
+    resetGame();
+}
+
+// Функция для перезапуска игры
+function resetGame() {
+    number = Math.floor(Math.random() * 100) + 1; // новое число
+    errorCount = 0; // сброс ошибок
+    startTime = Date.now(); // сброс времени
+    gameFinished = false; // сброс флага игры
+    line.style.background = 'blue'; // сброс цвета линии
+    dx = 3; // сброс скорости
+    document.getElementById('message').textContent = ""; // очистка сообщения
 }
 </script>
 
