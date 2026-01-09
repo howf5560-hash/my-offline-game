@@ -17,6 +17,7 @@
     .shop-item { margin: 20px 0; cursor: pointer; padding: 10px; background: #333; border-radius: 5px; }
     .shop-item:hover { background: #555; }
     .shop-item.disabled { background: #777; cursor: not-allowed; }
+    input { background-color: transparent; color: #fff; border: none; border-bottom: 1px solid #fff; outline: none; font-size: 16px; }
 </style>
 </head>
 <body>
@@ -64,15 +65,14 @@ let startTime = Date.now(); // время начала игры
 let gameFinished = false; // флаг для завершения игры
 let coins = 0; // количество монет
 let oldRecord = { time: 0, errors: 0 }; // рекорд
-let currentFont = "white"; // текущий шрифт
+let currentFont = "black"; // текущий шрифт (по умолчанию черный)
 
-// Двигаем змейку по всему экрану
+// Двигаем змейку только слева направо
 function moveLine() {
     pos += dx;
     if (pos > maxWidth || pos < 0) dx = -dx;
-    let randomVertical = Math.random() * maxHeight; // случайное вертикальное положение
     line.style.left = pos + "px";
-    line.style.top = randomVertical + "px"; // обновляем вертикальную позицию
+    // Линия теперь не двигается по вертикали
     requestAnimationFrame(moveLine);
 }
 moveLine();
@@ -80,7 +80,7 @@ moveLine();
 function checkGuess() {
     if (gameFinished) return; // если игра закончена, не обрабатываем новые попытки
 
-    let guess = document.getElementById('guessInput').value.trim().toLowerCase(); // получаем введённый текст
+    let guess = document.getElementById('guessInput').value.trim(); // получаем введённый текст
     let message = document.getElementById('message');
 
     // Чит-код
@@ -182,16 +182,14 @@ function buyFont(color) {
         coins -= fontPrice[color]; // списываем монеты
         document.getElementById('coins').textContent = `Монеты: ${coins}`;
         currentFont = color;
+        // Изменяем цвет шрифта в поле ввода
+        document.getElementById('guessInput').style.color = color === 'rainbow' ? getRainbowColor() : color;
     } else {
         alert("У вас недостаточно монет!");
     }
 }
 
-// Применение шрифта
-document.getElementById('guessInput').addEventListener('input', function() {
-    document.getElementById('guessInput').style.color = currentFont === 'rainbow' ? getRainbowColor() : currentFont;
-});
-
+// Применение радужного цвета
 function getRainbowColor() {
     const colors = ['#FF0000', '#FF7F00', '#FFFF00', '#00FF00', '#0000FF', '#4B0082', '#8B00FF'];
     let i = Math.floor(Math.random() * colors.length);
