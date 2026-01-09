@@ -18,6 +18,7 @@
     .shop-item:hover { background: #555; }
     .shop-item.disabled { background: #777; cursor: not-allowed; }
     input { background-color: transparent; color: #fff; border: none; border-bottom: 1px solid #fff; outline: none; font-size: 16px; }
+    #version { position: fixed; bottom: 20px; right: 20px; font-size: 16px; color: #fff; }
 </style>
 </head>
 <body>
@@ -53,6 +54,9 @@
     <button onclick="closeShop()">Закрыть магазин</button>
 </div>
 
+<!-- Версия игры -->
+<div id="version">Version: 1.001</div>
+
 <script>
 let number = Math.floor(Math.random() * 100) + 1; // случайное число
 let line = document.getElementById('line');
@@ -66,6 +70,8 @@ let gameFinished = false; // флаг для завершения игры
 let coins = 0; // количество монет
 let oldRecord = { time: 0, errors: 0 }; // рекорд
 let currentFont = "black"; // текущий шрифт (по умолчанию черный)
+let boughtFonts = { blue: false, orange: false, rainbow: false }; // отслеживаем купленные шрифты
+let version = 1.001; // начальная версия игры
 
 // Двигаем змейку только слева направо
 function moveLine() {
@@ -96,6 +102,7 @@ function checkGuess() {
         gameFinished = true;
         coins += 10; // за чит-код тоже даём монеты
         document.getElementById('coins').textContent = `Монеты: ${coins}`;
+        updateVersion(); // обновляем версию
         let endTime = Date.now();
         let timeTaken = (endTime - startTime) / 1000; // время в секундах
         showModal(timeTaken, errorCount);
@@ -126,6 +133,7 @@ function checkGuess() {
         showModal(timeTaken, errorCount);
         coins += 10; // начисляем монеты
         document.getElementById('coins').textContent = `Монеты: ${coins}`;
+        updateVersion(); // обновляем версию
     } else {
         message.textContent = "Не угадал! Попробуй ещё!";
         line.style.background = "red"; // линия становится красной
@@ -186,9 +194,16 @@ function closeShop() {
 function buyFont(color) {
     let fontPrice = { 'blue': 10, 'orange': 50, 'rainbow': 100 };
 
+    // Проверка на купленный шрифт
+    if (boughtFonts[color]) {
+        alert("Этот шрифт уже куплен!");
+        return;
+    }
+
     if (coins >= fontPrice[color]) {
         coins -= fontPrice[color]; // списываем монеты
         document.getElementById('coins').textContent = `Монеты: ${coins}`;
+        boughtFonts[color] = true; // шрифт куплен
         currentFont = color;
         // Изменяем цвет шрифта в поле ввода
         document.getElementById('guessInput').style.color = color === 'rainbow' ? getRainbowColor() : color;
@@ -203,6 +218,13 @@ function getRainbowColor() {
     let i = Math.floor(Math.random() * colors.length);
     return colors[i];
 }
+
+// Обновление версии игры
+function updateVersion() {
+    version += 0.001; // увеличиваем на 0.001
+    document.getElementById('version').textContent = `Version: ${version.toFixed(3)}`;
+}
+
 </script>
 
 </body>
